@@ -6,7 +6,34 @@
 	</head>
 	
 	<th:block layout:fragment="customContent">
+		<table>
+			<thead>
+				<tr>
+					<th>회원아이디</th>
+					<th>회원비밀번호</th>
+					<th>회원등급</th>
+					<th>회원이름</th>
+					<th>회원주소</th>
+					<th>회원이메일</th>
+					<th>회원등록일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:unless="${memberList != null}">
+					<td colspan="7">등록된 회원 정보가 없습니다.</td>
+				</tr>
+				<tr th:if="${memberList != null}" th:each="l : ${memberList}">
+					<td th:text="${l.memberId}"></td>
+					<td th:text="${l.memberPw}"></td>
+					<td th:text="${l.memberLevelName}"></td>
+					<td th:text="${l.memberName}"></td>
+					<td th:text="${l.memberAddr}"></td>
+					<td th:text="${l.memberEmail}"></td>
+					<td th:text="${l.memberRegDate}"></td>
 
+				</tr>
+			</tbody>
+		</table>
 	</th:block>
 	
 	<th:block layout:fragment="customJsFile">
