@@ -84,7 +84,8 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 
-	<root level="ERROR">
+	<!-- 필수사항	-->
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
