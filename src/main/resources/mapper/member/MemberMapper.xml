@@ -16,6 +16,15 @@
         <result column="m_email" property="memberEmail"/>
         <result column="m_addr" property="memberAddr"/>
         <result column="m_reg_date" property="memberRegDate"/>
+
+        <!--  고급매핑 1:1 association, 1:n collection  -->
+        <collection property="goodsList" ofType="Goods">
+            <id column="g_code" property="goodsCode" />
+            <result column="g_name" property="goodsName" />
+            <result column="g_price" property="goodsPrice" />
+            <result column="g_seller_id" property="goodsSellerId" />
+            <result column="g_reg_date" property="goodsRegDate" />
+        </collection>
     </resultMap>
 
     <resultMap id="memberLevelResultMap" type="MemberLevel">
@@ -23,6 +32,50 @@
         <result column="level_name" property="levelName"/>
         <result column="level_reg_date" property="levelRegDate"/>
     </resultMap>
+
+    <!-- 판매자 현황   -->
+    <select id="getSellerList" resultMap="memberResultMap">
+        /*판매자 현황*/
+        SELECT
+            m.m_id,
+            m.m_pw,
+            m.m_name,
+            m.m_email,
+            m.m_addr,
+            m.m_reg_date,
+            g.g_code,
+            g.g_name,
+            g.g_price,
+            g.g_reg_date
+        FROM
+            tb_member AS m
+            LEFT JOIN
+            tb_goods AS g
+            ON
+            m.m_id = g.g_seller_id
+        WHERE
+            m.m_level = 2;
+    </select>
+
+    <!-- 회원 탈퇴   -->
+    <delete id="removeById" parameterType="String">
+        /*회원 탈퇴*/
+        DELETE
+        FROM
+            tb_member
+        WHERE
+            m_id = #{memberId};
+    </delete>
+
+    <!-- 회원 로그인 이력 삭제  -->
+    <delete id="removeLoginHistoryById" parameterType="String">
+        /* 회원 로그인 이력 삭제 */
+        DELETE
+        FROM
+            tb_login
+        WHERE
+            login_id = #{memberId};
+    </delete>
 
     <update id="modifyMember" parameterType="Member">
         /* 회원수정 */
