@@ -23,6 +23,18 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberMapper memberMapper;
 
+    @GetMapping("/sellerList")
+    public String getSellerList(Model model) {
+
+        List<Member> sellerList = memberMapper.getSellerList();
+
+        log.info("판매자리스트: {}", sellerList);
+        model.addAttribute("title","판매자현황조회");
+        model.addAttribute("sellerList",sellerList);
+
+        return "admin/member/sellerList";
+    }
+
     @PostMapping("/removeMember")
     public String removeMember(@RequestParam(value = "memberId") String memberId,
                                @RequestParam(value = "memberPw") String memberPw,
@@ -33,6 +45,10 @@ public class MemberController {
         // 실습. 회원의 정보가 일치하지 않으면 회원탈퇴 페이지로 이동
         if(isCheck) {
             //탈퇴 프로세스
+            Member memberInfo = (Member) resultMap.get("memberInfo");
+            int memberLevel = memberInfo.getMemberLevel();
+            memberService.removeMember(memberLevel,memberId);
+            reAttr.addAttribute("msg","회원 "+memberId+"가 탈퇴처리 되었습니다.");
 
         // 회원의 정보가 일치하면 회원목록조회 페이지로 이동
         }else {
@@ -104,13 +120,15 @@ public class MemberController {
     }
 
     @GetMapping("/memberList")
-    public String getMemberList(Model model) {
+    public String getMemberList(Model model,
+                                @RequestParam(value = "msg",required = false) String msg) {
         List<Member> memberList = memberService.getMemberList();
 
         log.info("회원목록조회 : {}", memberList);
 
         model.addAttribute("title","회원목록조회");
         model.addAttribute("memberList", memberList);
+        if(msg != null) model.addAttribute("msg",msg);
 
         return "admin/member/memberList";
     }

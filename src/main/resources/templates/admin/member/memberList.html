@@ -47,5 +47,9 @@
 	</th:block>
 	
 	<th:block layout:fragment="customJs">
+		<script th:inline="javascript">
+			const msg = [[${msg}]];
+			if(msg) alert(msg);
+		</script>
 	</th:block>
 </html>

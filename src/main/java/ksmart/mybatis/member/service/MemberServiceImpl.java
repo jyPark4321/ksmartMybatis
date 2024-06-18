@@ -1,8 +1,10 @@
 package ksmart.mybatis.member.service;
 
+import ksmart.mybatis.goods.mapper.GoodsMapper;
 import ksmart.mybatis.member.dto.Member;
 import ksmart.mybatis.member.dto.MemberLevel;
 import ksmart.mybatis.member.mapper.MemberMapper;
+import ksmart.mybatis.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,33 @@ import java.util.Map;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberMapper memberMapper;
+    private final OrderMapper orderMapper;
+    private final GoodsMapper goodsMapper;
+
+    /**
+     * 회원 탈퇴 프로세스
+     * @param memberLevel : 회원등급
+     * @param memberId : 회원아이디
+     * @detail 회원등급에 맞는 회원탈퇴
+     */
+    @Override
+    public void removeMember(int memberLevel, String memberId) {
+        //회원등급
+        switch (memberLevel){
+            // 판매자 (상품테이블,주문테이블)
+            case 2 -> {
+                orderMapper.removeOrderBySellerId(memberId);
+                goodsMapper.removeGoodsBySellerId(memberId);
+            }
+            //구매자 (주문테이블)
+            case 3 -> {
+                orderMapper.removeOrderByOrderId(memberId);
+            }
+        }
+            //공통 (로그인테이블, 회원테이블)
+        memberMapper.removeLoginHistoryById(memberId);
+        memberMapper.removeById(memberId);
+    }
 
     /**
      * 특정 회원 확인

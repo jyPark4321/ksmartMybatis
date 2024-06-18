@@ -9,6 +9,8 @@ import java.util.Map;
 public interface MemberService {
 
     //서비스에 대한 추상메소드 선언
+    // 회원 탈퇴
+    void removeMember(int memberLevel, String memberId);
     // 회원 정보 확인
     Map<String, Object> checkMemberInfo(String memberId,String memberPw);
     //회원 정보 수정

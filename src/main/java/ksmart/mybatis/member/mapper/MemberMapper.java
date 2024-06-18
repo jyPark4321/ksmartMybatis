@@ -7,6 +7,14 @@ import java.util.List;
 
 @Mapper
 public interface MemberMapper {
+   // 판매자 현황
+   List<Member> getSellerList();
+
+   // 회원 탈퇴
+   int removeById(String memberId);
+
+   // 회원 로그인 이력 삭제
+   int removeLoginHistoryById(String memberId);
 
    // 회원 수정
    int modifyMember(Member member);
