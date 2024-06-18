@@ -24,6 +24,53 @@
         <result column="level_reg_date" property="levelRegDate"/>
     </resultMap>
 
+    <update id="modifyMember" parameterType="Member">
+        /* 회원수정 */
+        UPDATE tb_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberPw != null and memberPw != ''">
+                m_pw=#{memberPw},
+            </if>
+            <if test="memberName != null and memberName != ''">
+                m_name=#{memberName},
+            </if>
+            <if test="memberLevel != null and memberLevel != ''">
+                m_level=#{memberLevel},
+            </if>
+            <if test="memberAddr != null and memberAddr != ''">
+                m_level=#{memberAddr},
+            </if>
+            <if test="memberEmail != null and memberEmail != ''">
+                m_level=#{memberEmail}
+            </if>
+        </trim>
+        WHERE
+            m_id=#{memberId};
+    </update>
+
+    <select id="getMemberInfoById" parameterType="String" resultMap="memberResultMap">
+        /* 특정회원정보조회 */
+        SELECT
+            m.m_id,
+            m.m_pw,
+            m.m_name,
+            m.m_level,
+            m.m_email,
+            m.m_addr
+        FROM
+            tb_member AS m
+        WHERE
+            m.m_id = #{memberId};
+    </select>
+
+    <insert id="addMember" parameterType="Member">
+        /* 회원 가입 */
+        INSERT INTO tb_member
+            (m_id, m_pw, m_name, m_level, m_email, m_addr, m_reg_date)
+        VALUES
+            (#{memberId}, #{memberPw}, #{memberName}, #{memberLevel}, #{memberEmail}, #{memberAddr}, CURDATE())
+    </insert>
+
     <select id="idCheck" parameterType="string" resultType="boolean">
         SELECT
             COUNT(m_id)
@@ -76,7 +123,8 @@
             INNER JOIN
             tb_member_level as l
             ON
-            m.m_level = l.level_num;
+            m.m_level = l.level_num
+        ORDER BY m.m_id;
 
      </select>
  </mapper>

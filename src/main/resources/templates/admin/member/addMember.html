@@ -111,6 +111,22 @@
 	
 	<th:block layout:fragment="customJs">
 		<script>
+			// 회원가입초기화 -> 회원가입 취소
+			$('#resetBtn').click(e => {
+				e.preventDefault();
+				location.href = '/';
+			})
+			// 가입페이지 초기화
+			$('#addMemberForm input').not('#memberId').prop('disabled',true);
+			$('#addMemberForm select').prop('disabled',true);
+			$('#addMemberForm button').not('#idCheck').prop('disabled',true);
+
+			$('#memberId').change(function (){
+				$('#addMemberForm input').not('#memberId').prop('disabled',true);
+				$('#addMemberForm select').prop('disabled',true);
+				$('#addMemberForm button').not('#idCheck').prop('disabled',true);
+			});
+
 			$('#idCheck').click(function(){
 				const memberId = $('#memberId').val();
 				if(!memberId){
@@ -125,6 +141,17 @@
 					dataType : 'json'
 				});
 				request.done(response => {
+					const isMember = response;
+
+					$('#addMemberForm input').not('#memberId').prop('disabled',isMember);
+					$('#addMemberForm select').prop('disabled',isMember);
+					$('#addMemberForm button').not('#idCheck').prop('disabled',isMember);
+
+					if(isMember){
+						alert('회원가입을 할 수 없는 아이디입니다.');
+						$('#memberId').val('');
+						$('#memberId').focus;
+					}
 					console.log(response);
 				});
 				request.fail((jqXHR,textStatus,error)=>{
@@ -132,6 +159,23 @@
 				});
 			});
 
+			// 회원가입
+			$('#addBtn').click(function (){
+				let isSubmit = true;
+
+				$('#addMemberForm input,#addMemberForm select').each((idx,element) => {
+					const id = element.id;
+					const value = element.value;
+					if(!value){
+						alert('필수입력 항목입니다.');
+						$(element).focus();
+						isSubmit = false;
+						return false;
+					}
+				});
+				if(isSubmit) $('#addMemberForm').submit();
+
+			})
 		</script>
 	</th:block>
 </html>
