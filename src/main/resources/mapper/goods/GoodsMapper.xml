@@ -25,6 +25,30 @@
 
     </resultMap>
 
+    <!-- 상품등록  -->
+    <insert id="addGoods" parameterType="Goods">
+        <selectKey keyProperty="goodsCode" resultType="String" order="BEFORE">
+            /* 상품 자동 증가 코드 */
+
+            SELECT
+            CASE
+            WHEN COUNT(g_code) = 0 THEN 'g001'
+            ELSE
+            CONCAT(
+            'g',
+            LPAD(MAX(CAST(SUBSTRING_INDEX(g_code,'g',-1) AS UNSIGNED))+1,3,'0')
+            )
+
+            END AS goodsCode
+            FROM
+            tb_goods
+        </selectKey>
+        /* 상 품 등 록 */
+        INSERT INTO tb_goods
+        (g_code, g_name, g_price, g_seller_id, g_reg_date)
+        VALUES (#{goodsCode}, #{goodsName}, #{goodsPrice}, #{goodsSellerId}, CURDATE())
+    </insert>
+
     <select id="getGoodsList" resultMap="GoodsResultMap">
         /* 상품 정보*/
         SELECT

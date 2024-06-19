@@ -6,6 +6,10 @@
 	</head>
 	
 	<th:block layout:fragment="customContent">
+		<!-- /* th:insert는 조각(fragment)을 자식 태그로 추가하는 속성*/		-->
+		<!-- /* th:replace는 조각(fragment)을 replace 속성을 선언한 해당 태그를 조각의 태그로 교체*/		-->
+		<div th:insert="~{fragments/search :: searchFragment}"></div>
+
 		<table>
 			<thead>
 				<tr>
@@ -20,7 +24,7 @@
 					<th>삭제</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tBody">
 				<tr th:unless="${memberList != null}">
 					<td colspan="7">등록된 회원 정보가 없습니다.</td>
 				</tr>
@@ -44,12 +48,34 @@
 	</th:block>
 	
 	<th:block layout:fragment="customJsFile">
+		<script th:src="@{/js/jquery-3.7.1.js}"></script>
 	</th:block>
 	
 	<th:block layout:fragment="customJs">
 		<script th:inline="javascript">
 			const msg = [[${msg}]];
 			if(msg) alert(msg);
+
+			$('#searchBtn').click(function(){
+				//여기를 완성해야함
+				const searchKey = $('#searchKey').val();
+				const searchValue = $('#searchValue').val();
+				const searchObj = {searchKey,searchValue};
+				console.log(searchObj);
+				const request = $.ajax({
+					url : '/member/searchList',
+					method : 'POST',
+					contentType: 'application/json; charset=utf-8',
+					data : JSON.stringify(searchObj),
+					dataType : 'json'
+				});
+				request.done(function (data){
+					console.log(data);
+				});
+				request.fail(function (jqXHR, textStatus, error){
+					console.log(error);
+				});
+			});
 		</script>
 	</th:block>
 </html>

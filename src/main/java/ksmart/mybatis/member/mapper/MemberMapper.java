@@ -2,11 +2,15 @@ package ksmart.mybatis.member.mapper;
 
 import ksmart.mybatis.member.dto.Member;
 import ksmart.mybatis.member.dto.MemberLevel;
+import ksmart.mybatis.member.dto.Search;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
 public interface MemberMapper {
+
+   //회원 검색 조회
+   List<Member> getSearchList(Search search);
    // 판매자 현황
    List<Member> getSellerList();
 

@@ -3,6 +3,7 @@ package ksmart.mybatis.member.service;
 import ksmart.mybatis.goods.mapper.GoodsMapper;
 import ksmart.mybatis.member.dto.Member;
 import ksmart.mybatis.member.dto.MemberLevel;
+import ksmart.mybatis.member.dto.Search;
 import ksmart.mybatis.member.mapper.MemberMapper;
 import ksmart.mybatis.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,25 @@ public class MemberServiceImpl implements MemberService{
     private final MemberMapper memberMapper;
     private final OrderMapper orderMapper;
     private final GoodsMapper goodsMapper;
+
+    /**
+     * 회원 검색 조회
+     * @param search
+     * @return
+     */
+    @Override
+    public List<Member> getSearchList(Search search) {
+        String searchKey = search.getSearchKey();
+        String cloumnName = "";
+        switch (searchKey){
+            case "memberId" -> cloumnName = "m.m_id";
+            case "memberName" -> cloumnName = "m.m_name";
+            case "memberAddr" -> cloumnName = "m.m_addr";
+        }
+        search.setSearchKey(cloumnName);
+        log.info("search: {}",search);
+        return memberMapper.getSearchList(search);
+    }
 
     /**
      * 회원 탈퇴 프로세스

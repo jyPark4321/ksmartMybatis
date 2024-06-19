@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <div id="search" th:fragment="searchFragment">
+        <select id="searchKey">
+            <option value="memberId">회원아이디</option>
+            <option value="memberNaem">회원이름</option>
+            <option value="memberAddr">회원주소</option>
+        </select>
+        <input type="text" id="searchValue" placeholder="검색어 입력하세요"/>
+        <button type="button" id="searchBtn">검색</button>
+    </div>
+</html>

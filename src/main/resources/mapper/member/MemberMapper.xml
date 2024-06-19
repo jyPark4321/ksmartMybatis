@@ -33,6 +33,32 @@
         <result column="level_reg_date" property="levelRegDate"/>
     </resultMap>
 
+
+    <!-- 회원 검색 조회 -->
+    <select id="getSearchList" parameterType="Search" resultMap="memberResultMap">
+        /* 회원조회 */
+        SELECT
+        m.m_id,
+        m.m_pw,
+        m.m_name,
+        m.m_level,
+        l.level_name,
+        m.m_email,
+        m.m_addr,
+        m.m_reg_date
+        FROM
+        tb_member as m
+        INNER JOIN
+        tb_member_level as l
+        ON
+        m.m_level = l.level_num
+        <where>
+            <if test="searchKey != null and searchKey != ''">
+                ${searchKey} LIKE CONCAT('%', #{searchValue}, '%')
+            </if>
+        </where>
+        ORDER BY m.m_id
+    </select>
     <!-- 판매자 현황   -->
     <select id="getSellerList" resultMap="memberResultMap">
         /*판매자 현황*/

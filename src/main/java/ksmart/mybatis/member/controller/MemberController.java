@@ -2,6 +2,7 @@ package ksmart.mybatis.member.controller;
 
 import ksmart.mybatis.member.dto.Member;
 import ksmart.mybatis.member.dto.MemberLevel;
+import ksmart.mybatis.member.dto.Search;
 import ksmart.mybatis.member.mapper.MemberMapper;
 import ksmart.mybatis.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,21 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberMapper memberMapper;
+
+    @PostMapping("/searchList")
+    @ResponseBody
+    public List<Member> getSearchList(@RequestBody Search search){
+		/*
+		@RequestParam(value="searchKey") String searchKey
+		,@RequestParam(value="searchValue") String searchValue
+		log.info("searchKey: {}", searchKey);
+		log.info("searchValue : {}", searchValue);
+		*/
+
+        log.info("search: {}", search);
+
+        return memberService.getSearchList(search);
+    }
 
     @GetMapping("/sellerList")
     public String getSellerList(Model model) {

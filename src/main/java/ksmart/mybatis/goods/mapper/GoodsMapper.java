@@ -7,7 +7,8 @@ import java.util.List;
 
 @Mapper
 public interface GoodsMapper {
-
+    //상품등록
+    int addGoods(Goods goods);
     // 상품조회
     List<Goods> getGoodsList();
 
