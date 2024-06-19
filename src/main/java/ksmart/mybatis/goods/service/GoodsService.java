@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -15,6 +16,10 @@ import java.util.List;
 @Slf4j
 public class GoodsService {
     private final GoodsMapper goodsMapper;
+
+    public Goods getGoodsInfoByCode(String goodsCode){
+        return goodsMapper.getGoodsInfoByCode(goodsCode);
+    }
 
     public void addGoods(Goods goods){
         log.info("상품등록 전 goods:{}",goods);
@@ -27,4 +32,17 @@ public class GoodsService {
     }
 
 
+    public List<Goods> getSearchList(List<Map<String, Object>> searchList) {
+        searchList.forEach(search -> {
+            String searchKey = (String) search.get("searchKey");
+            switch (searchKey) {
+                case "memberId" -> searchKey = "m.m_id";
+                case "memberName" -> searchKey = "m.m_name";
+                case "goodsName" -> searchKey = "g.g_name";
+                case "goodsPrice" -> searchKey = "g.g_price";
+            }
+            search.replace("searchKey",searchKey);
+        });
+        return goodsMapper.getSearchList(searchList);
+    }
 }

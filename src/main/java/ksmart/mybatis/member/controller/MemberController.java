@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +25,17 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberMapper memberMapper;
 
+    @GetMapping("/searchList")
+    public String searchList(@RequestBody Search search , Model model) {
+        List<Member> memberList = memberService.getSearchList(search);
+        model.addAttribute("title", "회원검색");
+        model.addAttribute("memberList",memberList);
+        return "admin/member/memberList";
+    }
+
     @PostMapping("/searchList")
     @ResponseBody
-    public List<Member> getSearchList(@RequestBody Search search){
+    public List<Member> getSearchList(@RequestBody Search search,Model model){
 		/*
 		@RequestParam(value="searchKey") String searchKey
 		,@RequestParam(value="searchValue") String searchValue
@@ -138,12 +147,29 @@ public class MemberController {
     @GetMapping("/memberList")
     public String getMemberList(Model model,
                                 @RequestParam(value = "msg",required = false) String msg) {
+
+        //검색 키워드
+        List<Search> searchCate = new ArrayList<Search>();
+        Search search1 = new Search();
+        search1.setSearchKey("memberId");
+        search1.setSearchText("회원아이디");
+        Search search2 = new Search();
+        search2.setSearchKey("memberName");
+        search2.setSearchText("회원이름");
+        Search search3 = new Search();
+        search3.setSearchKey("memberAddr");
+        search3.setSearchText("회원주소");
+        searchCate.add(search1);
+        searchCate.add(search2);
+        searchCate.add(search3);
+
         List<Member> memberList = memberService.getMemberList();
 
         log.info("회원목록조회 : {}", memberList);
 
         model.addAttribute("title","회원목록조회");
         model.addAttribute("memberList", memberList);
+        model.addAttribute("searchCate",searchCate);
         if(msg != null) model.addAttribute("msg",msg);
 
         return "admin/member/memberList";

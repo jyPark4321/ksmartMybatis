@@ -9,11 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +22,27 @@ public class GoodsController {
 
     private final GoodsService goodsService;
     private final MemberMapper memberMapper;
+
+    @PostMapping("/searchList")
+    @ResponseBody
+    public List<Goods> getGoodsSearchList(@RequestBody List<Map<String, Object>> searchList){
+        // log.info("searchList : {}",searchList);
+        List<Goods> goodsList = goodsService.getSearchList(searchList);
+        log.info("goodsList: {}",goodsList);
+        return null;
+    }
+
+    @GetMapping("/modifyGoods")
+    public String modifyGoods(@RequestParam(value = "goodsCode") String goodsCode,Model model){
+        log.info("상품수정화면 상품코드: {}",goodsCode);
+        Goods goodsInfo = goodsService.getGoodsInfoByCode(goodsCode);
+        List<Member> sellerList = memberMapper.getSellerList();
+        log.info("특정코드기준 상품조회 : {}",goodsInfo);
+        model.addAttribute("title","상품수정");
+        model.addAttribute("goodsInfo",goodsInfo);
+        model.addAttribute("sellerList", sellerList);
+        return "admin/goods/modifyGoods";
+    }
 
     @PostMapping("/addGoods")
     public String addGoods(Goods goods){

@@ -8,7 +8,7 @@
 	<th:block layout:fragment="customContent">
 		<!-- /* th:insert는 조각(fragment)을 자식 태그로 추가하는 속성*/		-->
 		<!-- /* th:replace는 조각(fragment)을 replace 속성을 선언한 해당 태그를 조각의 태그로 교체*/		-->
-		<div th:insert="~{fragments/search :: searchFragment}"></div>
+		<div th:insert="~{fragments/search :: searchFragment (${searchCate})}"></div>
 
 		<table>
 			<thead>
@@ -70,7 +70,41 @@
 					dataType : 'json'
 				});
 				request.done(function (data){
-					console.log(data);
+						const parseArr = data.map(item => {
+						const memberId = item.memberId;
+						const memberPw = item.memberPw;
+						const memberLevelName = item.memberLevelName;
+						const memberName = item.memberName;
+						const memberAddr = item.memberAddr;
+						const memberEmail = item.memberEmail;
+						const memberRegDate = item.memberRegDate;
+						return { memberId,
+							memberPw,
+							memberLevelName,
+							memberName,
+							memberAddr,
+							memberEmail,
+							memberRegDate }
+					});
+
+					$('#tBody').empty();
+					parseArr.forEach(item => {
+						const $tr = $('<tr></tr>');
+						for(const key in item){
+							const $td = $('<td></td>').text(`${item[key]}`);
+							$tr.append($td);
+						}
+
+						const $modifyA = $('<a></a>', { 'href' : `/member/modifyMember?memberId=${item.memberId}`});
+						$modifyA.text('수정');
+						const $removeA = $('<a></a>', { 'href' : `/member/removeMember?memberId=${item.memberId}`});
+						$removeA.text('삭제');
+						const $modifyTd = $('<td></td>').append($modifyA);
+						const $removeTd = $('<td></td>').append($removeA);
+
+						$tr.append($modifyTd, $removeTd);
+						$('#tBody').append($tr);
+					})
 				});
 				request.fail(function (jqXHR, textStatus, error){
 					console.log(error);

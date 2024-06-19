@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ksmart.mybatis.goods.mapper.GoodsMapper">
 
-    <resultMap id="GoodsResultMap" type="Goods">
+    <resultMap id="goodsResultMap" type="Goods">
         <id column="g_code" property="goodsCode" />
         <result column="g_name" property="goodsName" />
         <result column="g_price" property="goodsPrice" />
@@ -24,7 +24,52 @@
         </association>
 
     </resultMap>
+    <!-- 다중조건 상품 조회 -->
+    <select id="getSearchList" parameterType="list" resultMap="goodsResultMap">
+        /* 다중조건 상품 조회 */
+        SELECT
+        g.g_code,
+        g.g_name,
+        g.g_price,
+        g.g_seller_id,
+        g.g_reg_date,
+        m.m_id,
+        m.m_name,
+        m.m_email
+        FROM
+        tb_goods AS g
+        INNER JOIN
+        tb_member AS m
+        ON
+        g.g_seller_id = m.m_id
+        <where>
+            <foreach collection="list" item="data">
+                <choose>
+                    <when test="data.searchKey != null and data.searchKey == 'g.g_price'">
+                        OR (
+                        ${data.searchKey} >= #{data.searchValue.minPrice}
+                        AND
+                        ${data.searchKey} <![CDATA[<=]]> #{data.searchValue.maxPrice}
+                        )
+                    </when>
+                    <otherwise>
+                        OR ${data.searchKey} LIKE CONCAT('%', #{data.searchValue}, '%')
+                    </otherwise>
+                </choose>
+            </foreach>
+        </where>
+    </select>
 
+    <!-- 특정 상품 조회   -->
+    <select id="getGoodsInfoByCode" parameterType="String" resultMap="goodsResultMap">
+        /* 특정 상품 조회 */
+        SELECT
+        g_code, g_name, g_price, g_seller_id
+        FROM
+        tb_goods AS g
+        WHERE
+        g.g_code = #{goodsCode}
+    </select>
     <!-- 상품등록  -->
     <insert id="addGoods" parameterType="Goods">
         <selectKey keyProperty="goodsCode" resultType="String" order="BEFORE">
@@ -49,7 +94,7 @@
         VALUES (#{goodsCode}, #{goodsName}, #{goodsPrice}, #{goodsSellerId}, CURDATE())
     </insert>
 
-    <select id="getGoodsList" resultMap="GoodsResultMap">
+    <select id="getGoodsList" resultMap="goodsResultMap">
         /* 상품 정보*/
         SELECT
             g.g_code,
